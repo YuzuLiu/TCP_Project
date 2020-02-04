@@ -1,0 +1,220 @@
+#:kivy 1.11.1
+#:import config kivy.config
+
+<MainScreen>:
+    id : sm
+    LoginScreen:
+    UserScreen:
+    FileChooserScreen:
+    GiftScreen:
+    RatingScreen:
+
+<LoginScreen>:
+    id : login_screen
+    name : 'login_screen'
+    FloatLayout:
+        Label:
+            text : 'Project: Daily Exchanger'
+            size_hint : .5, .5
+            font_size : 24
+            pos_hint : {'x': .25,'y': .6}
+        Label:
+            text : 'Please enter your Username:'
+            size_hint : .4, .4
+            font_size : 20
+            pos_hint : {'x': .3,'y': .45}
+        Label:
+            id : input_warning
+            text : 'This username has been used!'
+            size_hint : .4, .4
+            font_size : 20
+            pos_hint : {'x': .3,'y': .05}
+            color : 1,0,0,0
+        TextInput:
+            id : login_username
+            size_hint : .4, .06
+            pos_hint : {'x': .3,'y': .52}
+            font_size : 22
+        Button:
+            id : submit_button
+            text : "Submit!"
+            size_hint : 0.2, 0.1
+            font_size : 18
+            pos_hint : {'x': .4,'y': .35}
+            on_release : root.login(root.ids.login_username.text)
+#            on_release : app.set_username(root.ids.login_username.text)
+            
+<UserScreen>:
+    id : user_screen
+    name : 'user_screen'
+    FloatLayout:
+        Label:
+            id : user_screen_title
+            text : "Welcome"
+            size_hint: None, None
+            font_size : 36
+            pos_hint : {'x': .44,'y': .55}
+        Button:
+            text : "Upload"
+            size_hint : 0.2, 0.1
+            font_size : 18
+            pos_hint : {'x': .05,'y': .35}
+            on_press : root.manager.current = 'file_chooser_screen'
+        Button:
+            text : "Gifts"
+            size_hint : 0.2, 0.1
+            font_size : 18
+            pos_hint : {'x': .75,'y': .35}
+            on_press : root.get_gifts()
+        Button:
+            text : "Rating"
+            size_hint : 0.2, 0.1
+            font_size : 18
+            pos_hint : {'x': .4,'y': .35}
+            on_press : root.go_rating_screen()
+            
+<RatingScreen>:
+    id : rating_screen
+    name : 'rating_screen'
+
+    FloatLayout:
+        orientation: "vertical"
+        RV_rate:
+        Button:
+            text: 'Back'
+            size_hint: None, None
+            size: 150, 50
+            pos_hint: {'left': 1, 'bottom': 1}
+            on_release: root.manager.current = 'user_screen'
+
+<RV_rate>:
+    viewclass: 'Label'
+    RecycleBoxLayout:
+        default_size: None, dp(56)
+        default_size_hint: 1, None
+        size_hint_y: None
+        height: self.minimum_height
+        orientation: 'vertical'
+
+<FileChooserScreen>:
+    id : file_chooser_screen
+    name : 'file_chooser_screen'
+    label : label
+
+    # Providing the orentation 
+    orientation: 'vertical'
+  
+    # Creating the File list / icon view 
+      
+    BoxLayout: 
+        # Creating Icon view other side 
+        FileChooserIconView: 
+            canvas.before: 
+                Color: 
+                    rgb: .5, .4, .5
+                Rectangle: 
+                    pos: self.pos 
+                    size: self.size 
+            on_selection: root.select(*args) 
+  
+    # Adding label 
+    Label: 
+        id: label 
+        size_hint_y: .1
+        canvas.before: 
+            Color: 
+                rgb: .5, .5, .4
+            Rectangle: 
+                pos: self.pos 
+                size: self.size 
+
+    Button:
+        id : fileChooserButton
+        text : 'Enter'
+        size_hint_x: .1
+        size_hint_y: .1
+        pos_hint: {'right': 1, 'bottom': 1}
+        on_press: root.button_press(root.ids.label.text)
+
+<GiftScreen>:
+    id : gifts_screen
+    name : 'gifts_screen'
+
+    FloatLayout:
+        orientation: "vertical"
+        RV:
+        Button:
+            text: 'Back'
+            size_hint: None, None
+            size: 150, 50
+            pos_hint: {'left': 1, 'bottom': 1}
+            on_release: root.manager.current = 'user_screen'
+        Button:
+            text: 'Enter'
+            size_hint: None, None
+            size: 150, 50
+            pos_hint: {'right': 1, 'bottom': 1}
+            on_release: root.music_info_pop()
+
+<SelectableLabel>:
+    # Draw a background to indicate selection
+    canvas.before:
+        Color:
+            rgba: (.0, 0.9, .1, .3) if self.selected else (0, 0, 0, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<RV>:
+    viewclass: 'SelectableLabel'
+    SelectableRecycleBoxLayout:
+        default_size: None, dp(56)
+        default_size_hint: 1, None
+        size_hint_y: None
+        height: self.minimum_height
+        orientation: 'vertical'
+        multiselect: False
+        touch_multiselect: False
+
+<OpenRate>:
+    title: 'open_rate'
+    size_hint: None, None
+    size: 400, 120
+    auto_dismiss: False
+    text: input.text
+    lb_error: er
+
+    BoxLayout:
+        orientation: 'vertical'
+        pos: self.pos
+        size: root.size
+
+        BoxLayout:
+            orientation: 'horizontal'
+            Label:
+                text: 'Enter Value'
+
+            TextInput:
+                id: input
+                multiline: False
+                hint_text:'Score'
+                input_filter: 'int'
+                on_text: root.error = ''
+
+        BoxLayout:
+            orientation: 'horizontal'
+            Button:
+                text: 'Enter'
+                on_press: root._enter()
+
+            Button:
+                text: 'Cancel'
+                on_press: root._cancel()
+
+        Label:
+            id: er
+            foreground_color: 1, 250, 100, 1
+            color: 1, 0.67, 0, 1
+            size_hint_y: None
+            height: 0
+            text: root.error
